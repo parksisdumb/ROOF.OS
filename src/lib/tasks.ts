@@ -9,7 +9,8 @@ export function getFollowUpTasks(): FollowUpTask[] {
   const tasks: FollowUpTask[] = [];
   const processedContactIds = new Set<string>();
 
-  // 1. Prioritize leads for tasks
+  // 1. Process leads first and create tasks.
+  // Keep track of contacts that are part of a lead's follow-up.
   for (const lead of leads) {
     if (lead.nextFollowUpAt && !['Won', 'Lost'].includes(lead.status)) {
       const account = accounts.find(a => a.id === lead.accountId);
@@ -22,14 +23,15 @@ export function getFollowUpTasks(): FollowUpTask[] {
         relatedEntity: lead,
         relatedAccount: account,
       });
-      // Mark this contact as processed so we don't create a duplicate task
+      // Mark this contact as processed so we don't create a duplicate task.
       if (lead.contactId) {
         processedContactIds.add(lead.contactId);
       }
     }
   }
 
-  // 2. Add tasks from contacts only if they haven't been processed via a lead
+  // 2. Add tasks from contacts ONLY if they haven't been processed via a lead.
+  // This is the crucial de-duplication step.
   for (const contact of contacts) {
     if (contact.followUpDate && !processedContactIds.has(contact.id)) {
       const account = accounts.find(a => a.id === contact.accountId);
@@ -45,7 +47,7 @@ export function getFollowUpTasks(): FollowUpTask[] {
     }
   }
 
-  // 3. Sort the final list by due date
+  // 3. Sort the final, de-duplicated list by due date.
   tasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
   return tasks;

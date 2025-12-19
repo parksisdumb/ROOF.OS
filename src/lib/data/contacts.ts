@@ -1,3 +1,4 @@
+
 import type { Contact } from '../types';
 
 export const contacts: Contact[] = [
@@ -60,7 +61,7 @@ export const contacts: Contact[] = [
     lastActivityDate: '2024-05-29T11:45:00Z',
     lastActivityType: 'Meeting',
     // This contact is associated with lead_4 which has its own follow-up. 
-    // Removing this to prevent duplicate task generation.
+    // This was the source of the duplicate key error. Removing this to prevent duplicate task generation.
     // followUpDate: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), 
     // followUpType: 'Meeting',
   },
