@@ -35,6 +35,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import type { Account } from '@/lib/types';
+import Link from 'next/link';
 
 export const columns: ColumnDef<Account>[] = [
   {
@@ -91,7 +92,9 @@ export const columns: ColumnDef<Account>[] = [
               Copy Account ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/accounts/${account.id}`}>View details</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>Add Contact</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
