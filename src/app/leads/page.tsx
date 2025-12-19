@@ -1,6 +1,7 @@
+
 import { MainLayout } from '@/components/layout/main-layout';
 import { LeadsTable } from '@/components/leads/leads-table';
-import { leads } from '@/lib/data';
+import { leads, accounts } from '@/lib/data';
 import {
   Card,
   CardContent,
@@ -20,7 +21,7 @@ export default function LeadsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <LeadsTable leads={leads} />
+          <LeadsTable leads={leads} accounts={accounts} />
         </CardContent>
       </Card>
     </MainLayout>

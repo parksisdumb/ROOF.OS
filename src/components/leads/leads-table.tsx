@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -40,9 +41,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import type { Lead } from '@/lib/types';
+import type { Lead, Account } from '@/lib/types';
 import { AITaskGenerator } from '../shared/ai-task-generator';
-import { accounts } from '@/lib/data';
 
 const getStatusBadge = (status: Lead['status']) => {
   switch (status) {
@@ -67,7 +67,7 @@ const getStatusBadge = (status: Lead['status']) => {
   }
 };
 
-export const columns: ColumnDef<Lead>[] = [
+export const getColumns = (accounts: Account[]): ColumnDef<Lead>[] => [
   {
     accessorKey: 'opportunityName',
     header: ({ column }) => {
@@ -94,9 +94,10 @@ export const columns: ColumnDef<Lead>[] = [
     header: 'Account',
     cell: ({ row }) => {
         const account = accounts.find(acc => acc.id === row.original.accountId);
+        if (!account) return 'N/A';
         return (
             <Link href={`/accounts/${row.original.accountId}`} className="hover:underline">
-                {account?.name}
+                {account.name}
             </Link>
         )
     }
@@ -126,10 +127,11 @@ export const columns: ColumnDef<Lead>[] = [
     cell: ({ row }) => {
       const lead = row.original;
       const [isAiOpen, setIsAiOpen] = React.useState(false);
+      const account = accounts.find(acc => acc.id === lead.accountId);
 
       return (
         <>
-        <AITaskGenerator lead={lead} open={isAiOpen} onOpenChange={setIsAiOpen} />
+        <AITaskGenerator lead={lead} account={account} open={isAiOpen} onOpenChange={setIsAiOpen} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -157,11 +159,13 @@ export const columns: ColumnDef<Lead>[] = [
   },
 ];
 
-export function LeadsTable({ leads }: { leads: Lead[] }) {
+export function LeadsTable({ leads, accounts }: { leads: Lead[]; accounts: Account[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const columns = React.useMemo(() => getColumns(accounts), [accounts]);
 
   const table = useReactTable({
     data: leads,

@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -24,7 +25,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
-import type { Lead } from '@/lib/types';
+import type { Lead, Contact, Account } from '@/lib/types';
 import { generateFollowUpTasks } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { contacts } from '@/lib/data';
@@ -37,11 +38,12 @@ const formSchema = z.object({
 
 type AITaskGeneratorProps = {
   lead: Lead;
+  account?: Account;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export function AITaskGenerator({ lead, open, onOpenChange }: AITaskGeneratorProps) {
+export function AITaskGenerator({ lead, account, open, onOpenChange }: AITaskGeneratorProps) {
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [generatedTasks, setGeneratedTasks] = React.useState<string[] | null>(null);
   const { toast } = useToast();
@@ -61,7 +63,7 @@ export function AITaskGenerator({ lead, open, onOpenChange }: AITaskGeneratorPro
     const result = await generateFollowUpTasks({
       interactionNotes: values.interactionNotes,
       prospectName: prospectContact?.name || lead.opportunityName,
-      prospectType: prospectContact?.role || 'Prospect',
+      prospectType: account?.accountType || 'Prospect',
       productOffered: "Roofing Services",
     });
     setIsGenerating(false);

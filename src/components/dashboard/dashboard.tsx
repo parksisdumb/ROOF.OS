@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -10,7 +11,7 @@ import { KpiCard } from './kpi-card';
 import { SalesChart } from './sales-chart';
 import { RecentActivity } from './recent-activity';
 import { LeadsTable } from '../leads/leads-table';
-import { leads as mockLeads } from '@/lib/data';
+import { leads as mockLeads, accounts as mockAccounts } from '@/lib/data';
 
 export function Dashboard() {
   return (
@@ -58,7 +59,7 @@ export function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <LeadsTable leads={mockLeads.filter(l => l.status !== 'Won' && l.status !== 'Lost').slice(0, 5)} />
+            <LeadsTable leads={mockLeads.filter(l => l.status !== 'Won' && l.status !== 'Lost').slice(0, 5)} accounts={mockAccounts} />
           </CardContent>
         </Card>
       </div>
