@@ -6,51 +6,47 @@ import { contacts } from './data/contacts';
 import { accounts } from './data/accounts';
 
 export function getFollowUpTasks(): FollowUpTask[] {
-  const tasks: FollowUpTask[] = [];
-  const processedContactIds = new Set<string>();
+  const allTasks: FollowUpTask[] = [];
 
-  // Process leads first
-  leads.forEach((lead) => {
+  // Get all contact IDs that are already associated with a lead
+  const leadContactIds = new Set(leads.map(lead => lead.contactId));
+
+  // Process leads
+  for (const lead of leads) {
     if (lead.nextFollowUpAt && !['Won', 'Lost'].includes(lead.status)) {
       const account = accounts.find(a => a.id === lead.accountId);
-      tasks.push({
-        id: `lead-${lead.id}`, // Unique task ID for leads
+      allTasks.push({
+        id: `lead-${lead.id}`,
         dueDate: lead.nextFollowUpAt,
         type: 'Lead',
         title: `Follow-up on "${lead.opportunityName}"`,
-        description: `${lead.followUpType} with ${lead.opportunityName}.`,
+        description: `${lead.followUpType || 'Follow-up'} with ${lead.opportunityName}.`,
         relatedEntity: lead,
         relatedAccount: account,
       });
-      // If a lead has a follow-up, we consider its primary contact processed for tasks
-      if (lead.contactId) {
-        processedContactIds.add(lead.contactId);
-      }
     }
-  });
+  }
 
-  // Then, process contacts, skipping any that were already handled via a lead
-  contacts.forEach((contact) => {
-    // Only create a contact-based task if the contact has a follow-up
-    // AND has not already been processed as part of a lead.
-    if (contact.followUpDate && !processedContactIds.has(contact.id)) {
-        const account = accounts.find(a => a.id === contact.accountId);
-        tasks.push({
-            id: `contact-${contact.id}`, // Unique task ID for contacts
-            dueDate: contact.followUpDate,
-            type: 'Contact',
-            title: `Follow-up with ${contact.name}`,
-            description: `${contact.followUpType} with ${contact.name}.`,
-            relatedEntity: contact,
-            relatedAccount: account,
-        });
+  // Process contacts only if they are NOT associated with a lead
+  for (const contact of contacts) {
+    if (contact.followUpDate && !leadContactIds.has(contact.id)) {
+      const account = accounts.find(a => a.id === contact.accountId);
+      allTasks.push({
+        id: `contact-${contact.id}`,
+        dueDate: contact.followUpDate,
+        type: 'Contact',
+        title: `Follow-up with ${contact.name}`,
+        description: `${contact.followUpType || 'Follow-up'} with ${contact.name}.`,
+        relatedEntity: contact,
+        relatedAccount: account,
+      });
     }
-  });
-
+  }
+  
   // Sort the final, de-duplicated list by due date
-  tasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+  allTasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
-  return tasks;
+  return allTasks;
 }
 
 
