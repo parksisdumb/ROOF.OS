@@ -1,3 +1,4 @@
+
 export type Account = {
   id: string;
   name: string;
@@ -24,6 +25,10 @@ export type Contact = {
   phone: string;
   accountId: string;
   avatarUrl: string;
+};
+
+export type ContactWithAccount = Contact & {
+    accountName: string;
 };
 
 export type Property = {
