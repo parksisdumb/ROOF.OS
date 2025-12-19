@@ -6,64 +6,53 @@ import { contacts } from './data/contacts';
 import { accounts } from './data/accounts';
 
 export function getFollowUpTasks(): FollowUpTask[] {
-  const allPotentialTasks: FollowUpTask[] = [];
+  const tasksMap = new Map<string, FollowUpTask>();
 
-  // First, add all tasks from leads
+  // Add tasks from leads first, giving them priority
   leads.forEach((lead) => {
     if (lead.nextFollowUpAt && !['Won', 'Lost'].includes(lead.status)) {
       const account = accounts.find(a => a.id === lead.accountId);
-      allPotentialTasks.push({
-        id: `lead-${lead.id}`,
+      const task: FollowUpTask = {
+        id: `task-${lead.id}`, // Unique task ID based on lead
         dueDate: lead.nextFollowUpAt,
         type: 'Lead',
         title: `Follow-up on "${lead.opportunityName}"`,
         description: `${lead.followUpType} with ${lead.opportunityName}.`,
         relatedEntity: lead,
         relatedAccount: account,
-      });
+      };
+      // Use the contact ID for the map key to handle de-duplication
+      if (lead.contactId) {
+        tasksMap.set(lead.contactId, task);
+      } else {
+        tasksMap.set(lead.id, task); // Fallback to lead ID if no contact
+      }
     }
   });
 
-  // Then, add all tasks from contacts
+  // Then, add tasks from contacts, only if a task for that contact doesn't already exist
   contacts.forEach((contact) => {
     if (contact.followUpDate) {
+        // If a task for this contact already exists from a lead, skip it.
+        if (tasksMap.has(contact.id)) {
+            return;
+        }
+
         const account = accounts.find(a => a.id === contact.accountId);
-        allPotentialTasks.push({
-            id: `contact-${contact.id}`,
+        const task: FollowUpTask = {
+            id: `task-${contact.id}`, // Unique task ID based on contact
             dueDate: contact.followUpDate,
             type: 'Contact',
             title: `Follow-up with ${contact.name}`,
             description: `${contact.followUpType} with ${contact.name}.`,
             relatedEntity: contact,
             relatedAccount: account,
-        });
+        };
+        tasksMap.set(contact.id, task);
     }
   });
-
-  // De-duplication logic
-  const finalTasks: FollowUpTask[] = [];
-  const processedContactIds = new Set<string>();
-
-  // Prioritize lead tasks. If a lead task exists, we process it and mark its contact as handled.
-  allPotentialTasks
-    .filter(task => task.type === 'Lead')
-    .forEach(task => {
-        finalTasks.push(task);
-        const lead = task.relatedEntity as Lead;
-        if (lead.contactId) {
-            processedContactIds.add(lead.contactId);
-        }
-    });
-
-  // Only add contact tasks if that contact hasn't already been handled by a lead task.
-  allPotentialTasks
-    .filter(task => task.type === 'Contact')
-    .forEach(task => {
-        const contact = task.relatedEntity as Contact;
-        if (!processedContactIds.has(contact.id)) {
-            finalTasks.push(task);
-        }
-    });
+  
+  const finalTasks = Array.from(tasksMap.values());
 
   // Sort the final, de-duplicated list by due date
   finalTasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
