@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react';
 import {
   ColumnDef,
@@ -51,7 +52,13 @@ export const columns: ColumnDef<Account>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="font-medium">{row.getValue('name')}</div>,
+    cell: ({ row }) => {
+        return (
+            <Link href={`/accounts/${row.original.id}`} className="font-medium hover:underline">
+                {row.getValue('name')}
+            </Link>
+        )
+    },
   },
   {
     accessorKey: 'industry',
@@ -104,6 +111,7 @@ export const columns: ColumnDef<Account>[] = [
 ];
 
 export function AccountsTable({ accounts }: { accounts: Account[] }) {
+  const router = useRouter();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -195,9 +203,15 @@ export function AccountsTable({ accounts }: { accounts: Account[] }) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  onClick={() => router.push(`/accounts/${row.original.id}`)}
+                  className="cursor-pointer"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} onClick={(e) => {
+                        if (cell.column.id === 'actions') {
+                            e.stopPropagation();
+                        }
+                    }}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

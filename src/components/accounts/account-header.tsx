@@ -6,8 +6,9 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import type { Account } from '@/lib/types';
-import { DollarSign, Building, Briefcase } from 'lucide-react';
+import { DollarSign, Building, Briefcase, Pencil } from 'lucide-react';
 import { KpiCard } from '../dashboard/kpi-card';
+import { Button } from '../ui/button';
 
 export function AccountHeader({ account }: { account: Account }) {
     const formattedValue = new Intl.NumberFormat('en-US', {
@@ -18,9 +19,15 @@ export function AccountHeader({ account }: { account: Account }) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{account.name}</CardTitle>
-        <CardDescription>{account.industry} Client</CardDescription>
+      <CardHeader className="flex flex-row items-start justify-between">
+        <div>
+          <CardTitle>{account.name}</CardTitle>
+          <CardDescription>{account.industry} Client</CardDescription>
+        </div>
+        <Button variant="outline">
+          <Pencil className="mr-2 h-4 w-4" />
+          Edit Account
+        </Button>
       </CardHeader>
       <CardContent className="grid gap-4 md:grid-cols-3">
         <KpiCard
