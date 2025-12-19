@@ -11,6 +11,7 @@ import type { Property, Account } from '@/lib/types';
 import { Pencil, MapPin, Building, Warehouse, Home, Building2, Store } from 'lucide-react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import { EditPropertyForm } from './edit-property-form';
 
 const getPropertyIcon = (type: Property['propertyType']) => {
     switch (type) {
@@ -37,11 +38,11 @@ export function PropertyHeader({ property, account }: { property: Property, acco
 
   return (
     <>
-      {/* <EditPropertyForm
+      <EditPropertyForm
         property={property}
         isOpen={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
-      /> */}
+      />
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
           <div className="flex items-center gap-6">

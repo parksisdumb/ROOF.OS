@@ -4,7 +4,7 @@ import {
   generateFollowUpTasks as generateFollowUpTasksFlow,
   type GenerateFollowUpTasksInput,
 } from '@/ai/flows/generate-follow-up-tasks';
-import type { Account, Contact } from './types';
+import type { Account, Contact, Property } from './types';
 
 export async function generateFollowUpTasks(input: GenerateFollowUpTasksInput) {
   console.log('Generating tasks for:', input.prospectName);
@@ -48,3 +48,17 @@ export async function updateContact(id: string, data: Partial<Omit<Contact, 'id'
     return { success: false, error: 'Failed to update contact.' };
   }
 }
+
+export async function updateProperty(id: string, data: Partial<Omit<Property, 'id' | 'accountId'>>) {
+    console.log(`Updating property ${id} with:`, data);
+    // In a real app, you would update the database here.
+    try {
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('Property updated successfully (simulated).');
+      return { success: true, data: { id, ...data } };
+    } catch (error) {
+      console.error('Property Update Failed:', error);
+      return { success: false, error: 'Failed to update property.' };
+    }
+  }
