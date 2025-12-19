@@ -24,12 +24,14 @@ import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { usePathname } from 'next/navigation';
 import React from 'react';
+import { useTheme } from '../providers/theme-provider';
 
 // A simple utility to capitalize the first letter of a string
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export function Header() {
   const pathname = usePathname();
+  const { setTheme } = useTheme();
   // Create breadcrumbs from the pathname
   const pathSegments = pathname.split('/').filter(Boolean);
 
@@ -100,10 +102,10 @@ export function Header() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => document.documentElement.classList.remove('dark')}>
+            <DropdownMenuItem onClick={() => setTheme('light')}>
               Light
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => document.documentElement.classList.add('dark')}>
+            <DropdownMenuItem onClick={() => setTheme('dark')}>
               Dark
             </DropdownMenuItem>
           </DropdownMenuContent>
