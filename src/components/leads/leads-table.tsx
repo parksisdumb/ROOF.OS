@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import {
   ArrowUpDown,
   ChevronDown,
@@ -41,8 +42,9 @@ import {
 import { Badge } from '@/components/ui/badge';
 import type { Lead } from '@/lib/types';
 import { AITaskGenerator } from '../shared/ai-task-generator';
+import { accounts } from '@/lib/data';
 
-const getStatusBadge = (status: Lead['stage']) => {
+const getStatusBadge = (status: Lead['status']) => {
   switch (status) {
     case 'New':
       return <Badge variant="secondary">{status}</Badge>;
@@ -56,6 +58,10 @@ const getStatusBadge = (status: Lead['stage']) => {
       return <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">{status}</Badge>;
     case 'Lost':
       return <Badge variant="destructive">{status}</Badge>;
+    case 'Active':
+        return <Badge className="bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-200">{status}</Badge>;
+    case 'Delayed':
+        return <Badge variant="outline">{status}</Badge>;
     default:
       return <Badge>{status}</Badge>;
   }
@@ -63,41 +69,56 @@ const getStatusBadge = (status: Lead['stage']) => {
 
 export const columns: ColumnDef<Lead>[] = [
   {
-    accessorKey: 'prospectName',
+    accessorKey: 'opportunityName',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Prospect
+          Opportunity
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
-    cell: ({ row }) => <div className="font-medium">{row.getValue('prospectName')}</div>,
+    cell: ({ row }) => {
+        return (
+            <Link href={`/leads/${row.original.id}`} className="font-medium hover:underline">
+                {row.getValue('opportunityName')}
+            </Link>
+        )
+    },
   },
   {
-    accessorKey: 'company',
-    header: 'Company',
+    accessorKey: 'accountId',
+    header: 'Account',
+    cell: ({ row }) => {
+        const account = accounts.find(acc => acc.id === row.original.accountId);
+        return (
+            <Link href={`/accounts/${row.original.accountId}`} className="hover:underline">
+                {account?.name}
+            </Link>
+        )
+    }
   },
   {
-    accessorKey: 'value',
+    accessorKey: 'estimatedValue',
     header: () => <div className="text-right">Value</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('value'));
+      const amount = parseFloat(row.getValue('estimatedValue'));
       const formatted = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
+        maximumFractionDigits: 0
       }).format(amount);
 
       return <div className="text-right font-medium">{formatted}</div>;
     },
   },
   {
-    accessorKey: 'stage',
-    header: 'Stage',
-    cell: ({ row }) => getStatusBadge(row.getValue('stage')),
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({ row }) => getStatusBadge(row.getValue('status')),
   },
   {
     id: 'actions',
@@ -121,10 +142,12 @@ export const columns: ColumnDef<Lead>[] = [
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(lead.id)}
             >
-              Copy Lead ID
+              Copy Opportunity ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+                <Link href={`/leads/${lead.id}`}>View details</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem onSelect={() => setIsAiOpen(true)}>Generate AI Tasks</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -163,10 +186,10 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter by prospect name..."
-          value={(table.getColumn('prospectName')?.getFilterValue() as string) ?? ''}
+          placeholder="Filter by opportunity name..."
+          value={(table.getColumn('opportunityName')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table.getColumn('prospectName')?.setFilterValue(event.target.value)
+            table.getColumn('opportunityName')?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -225,7 +248,13 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} onClick={(e) => {
+                        // Stop propagation for links and actions inside the row
+                        const target = e.target as HTMLElement;
+                        if (target.closest('a') || cell.column.id === 'actions') {
+                            e.stopPropagation();
+                        }
+                    }}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

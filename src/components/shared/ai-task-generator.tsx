@@ -60,7 +60,7 @@ export function AITaskGenerator({ lead, open, onOpenChange }: AITaskGeneratorPro
     setGeneratedTasks(null);
     const result = await generateFollowUpTasks({
       interactionNotes: values.interactionNotes,
-      prospectName: lead.prospectName,
+      prospectName: prospectContact?.name || lead.opportunityName,
       prospectType: prospectContact?.role || 'Prospect',
       productOffered: "Roofing Services",
     });
@@ -99,7 +99,7 @@ export function AITaskGenerator({ lead, open, onOpenChange }: AITaskGeneratorPro
             AI Task Generator
           </DialogTitle>
           <DialogDescription>
-            Generate follow-up tasks for "{lead.prospectName}" based on your latest interaction.
+            Generate follow-up tasks for "{lead.opportunityName}" based on your latest interaction.
           </DialogDescription>
         </DialogHeader>
         {generatedTasks ? (

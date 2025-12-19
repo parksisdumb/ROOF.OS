@@ -72,13 +72,16 @@ export type Property = {
 
 export type Lead = {
   id:string;
-  prospectName: string;
-  company: string;
-  value: number;
-  stage: 'New' | 'Contacted' | 'Qualified' | 'Proposal' | 'Won' | 'Lost';
-  contactId: string;
+  opportunityName: string;
+  accountId: string;
   propertyId: string;
-  lastInteraction: string;
+  contactId: string;
+  opportunityType: 'Repair' | 'Maintenance' | 'Replacement' | 'Coating' | 'New Build';
+  estimatedValue: number;
+  probability?: number;
+  expectedCloseDate?: string; // ISO 8601 date string
+  status: 'Active' | 'Delayed' | 'Won' | 'Lost' | 'New' | 'Contacted' | 'Qualified' | 'Proposal';
+  lastInteraction: string; // ISO 8601 date string
 };
 
 export type Interaction = {

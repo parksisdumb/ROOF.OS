@@ -52,13 +52,13 @@ export function Dashboard() {
       <div>
         <Card>
           <CardHeader>
-            <CardTitle>Priority Leads</CardTitle>
+            <CardTitle>Priority Opportunities</CardTitle>
             <CardDescription>
-              Leads that require immediate attention.
+              Active deals that require attention.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <LeadsTable leads={mockLeads.slice(0, 5)} />
+            <LeadsTable leads={mockLeads.filter(l => l.status !== 'Won' && l.status !== 'Lost').slice(0, 5)} />
           </CardContent>
         </Card>
       </div>

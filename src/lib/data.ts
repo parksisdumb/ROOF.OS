@@ -1,8 +1,8 @@
-import type { Account, Contact, Property, Lead } from './types';
 import { accounts as accountData } from './data/accounts';
 import { contacts as contactData } from './data/contacts';
 import { properties as propertyData } from './data/properties';
 import { leads as leadData } from './data/leads';
+import type { Account, Contact, Property, Lead } from './types';
 
 
 export const accounts: Account[] = accountData;
