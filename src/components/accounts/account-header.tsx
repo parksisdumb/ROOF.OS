@@ -8,11 +8,13 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import type { Account } from '@/lib/types';
-import { DollarSign, Building, Briefcase, Pencil, MapPin, Phone, Globe } from 'lucide-react';
+import { DollarSign, Building, Briefcase, Pencil, MapPin, Phone, Globe, Calendar, History,GitMerge  } from 'lucide-react';
 import { KpiCard } from '../dashboard/kpi-card';
 import { Button } from '../ui/button';
 import { EditAccountForm } from './edit-account-form';
 import { Badge } from '../ui/badge';
+import { format, formatDistanceToNow } from 'date-fns';
+import { leads } from '@/lib/data';
 
 const getStageBadge = (stage?: Account['stage']) => {
   if (!stage) return null;
@@ -31,11 +33,22 @@ const getStageBadge = (stage?: Account['stage']) => {
 
 export function AccountHeader({ account }: { account: Account }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
+  
+  const openOpportunities = leads.filter(l => l.company === account.name && l.stage !== 'Won' && l.stage !== 'Lost');
+  const openOpportunitiesCount = openOpportunities.length;
+  const openOpportunitiesValue = openOpportunities.reduce((sum, lead) => sum + lead.value, 0);
+
   const formattedValue = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 0,
   }).format(account.totalValue);
+  
+  const formattedOpenValue = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(openOpportunitiesValue);
 
   return (
     <>
@@ -51,7 +64,7 @@ export function AccountHeader({ account }: { account: Account }) {
               <CardTitle>{account.name}</CardTitle>
               {getStageBadge(account.stage)}
             </div>
-            <CardDescription>{account.industry} Client</CardDescription>
+            <CardDescription>{account.accountType} - {account.industry}</CardDescription>
             <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
               {account.officeAddress && (
                 <div className="flex items-center gap-2">
@@ -71,6 +84,18 @@ export function AccountHeader({ account }: { account: Account }) {
                   <a href={`https://${account.website}`} target="_blank" rel="noopener noreferrer" className="hover:underline">{account.website}</a>
                 </div>
               )}
+               {account.createdAt && (
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  <span>Created: {format(new Date(account.createdAt), 'MMM d, yyyy')}</span>
+                </div>
+              )}
+               {account.lastActivityDate && (
+                <div className="flex items-center gap-2">
+                  <History className="h-4 w-4" />
+                  <span>Last Activity: {formatDistanceToNow(new Date(account.lastActivityDate))} ago</span>
+                </div>
+              )}
             </div>
           </div>
           <Button variant="outline" onClick={() => setIsEditDialogOpen(true)}>
@@ -78,12 +103,18 @@ export function AccountHeader({ account }: { account: Account }) {
             Edit Account
           </Button>
         </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-3">
-          <KpiCard
+        <CardContent className="grid gap-4 md:grid-cols-4">
+           <KpiCard
             title="Total Contract Value"
             value={formattedValue}
             icon={<DollarSign className="h-5 w-5 text-muted-foreground" />}
             trend={`${account.propertyIds.length} properties`}
+          />
+          <KpiCard
+            title="Open Opportunities"
+            value={formattedOpenValue}
+            icon={<Briefcase className="h-5 w-5 text-muted-foreground" />}
+            trend={`${openOpportunitiesCount} open leads`}
           />
           <KpiCard
             title="Contacts"

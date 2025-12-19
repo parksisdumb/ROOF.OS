@@ -4,7 +4,7 @@ import * as React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Pencil, Loader2 } from 'lucide-react';
+import { Pencil, Loader2, CalendarIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -37,6 +37,10 @@ import { useToast } from '@/hooks/use-toast';
 import { updateAccount } from '@/lib/actions';
 import { ScrollArea } from '../ui/scroll-area';
 import { Textarea } from '../ui/textarea';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { Calendar } from '../ui/calendar';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -50,6 +54,10 @@ const formSchema = z.object({
   phone: z.string().optional(),
   website: z.string().optional(),
   stage: z.enum(['Prospect', 'Active', 'Churned']).optional(),
+  accountType: z.enum(['Owner', 'Property Manager', 'General Contractor', 'Developer']).optional(),
+  createdAt: z.date().optional(),
+  lastActivityDate: z.date().optional(),
+  decisionTree: z.string().optional(),
   vendorManagementSoftware: z.string().optional(),
   vendorOnboardingCompleted: z.enum(['Yes', 'No', 'Not applicable']).optional(),
   insuranceRequirements: z.string().optional(),
@@ -80,6 +88,10 @@ export function EditAccountForm({
       phone: account.phone || '',
       website: account.website || '',
       stage: account.stage,
+      accountType: account.accountType,
+      createdAt: account.createdAt ? new Date(account.createdAt) : undefined,
+      lastActivityDate: account.lastActivityDate ? new Date(account.lastActivityDate) : undefined,
+      decisionTree: account.decisionTree || '',
       vendorManagementSoftware: account.vendorManagementSoftware || '',
       vendorOnboardingCompleted: account.vendorOnboardingCompleted,
       insuranceRequirements: account.insuranceRequirements || '',
@@ -97,6 +109,10 @@ export function EditAccountForm({
         phone: account.phone || '',
         website: account.website || '',
         stage: account.stage,
+        accountType: account.accountType,
+        createdAt: account.createdAt ? new Date(account.createdAt) : undefined,
+        lastActivityDate: account.lastActivityDate ? new Date(account.lastActivityDate) : undefined,
+        decisionTree: account.decisionTree || '',
         vendorManagementSoftware: account.vendorManagementSoftware || '',
         vendorOnboardingCompleted: account.vendorOnboardingCompleted,
         insuranceRequirements: account.insuranceRequirements || '',
@@ -108,7 +124,11 @@ export function EditAccountForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSaving(true);
     // This is a partial update, so we only send the fields that are in the form schema.
-    const result = await updateAccount(account.id, values);
+    const result = await updateAccount(account.id, {
+        ...values,
+        createdAt: values.createdAt?.toISOString(),
+        lastActivityDate: values.lastActivityDate?.toISOString(),
+    });
     setIsSaving(false);
 
     if (result.success) {
@@ -131,7 +151,7 @@ export function EditAccountForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Pencil className="h-6 w-6 text-primary" />
@@ -163,10 +183,33 @@ export function EditAccountForm({
                   name="companyName"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel>Company Name</FormLabel>
+                      <FormLabel>Company Name (if different)</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g., Starlight Properties, Inc." {...field} />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="accountType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Account Type</FormLabel>
+                       <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select an account type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Owner">Owner</SelectItem>
+                          <SelectItem value="Property Manager">Property Manager</SelectItem>
+                          <SelectItem value="General Contractor">General Contractor</SelectItem>
+                          <SelectItem value="Developer">Developer</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -178,7 +221,7 @@ export function EditAccountForm({
                     <FormItem>
                       <FormLabel>Industry</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Commercial Real Estate" {...field} />
+                        <Input placeholder="e.g., Commercial, Multifamily..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -202,6 +245,19 @@ export function EditAccountForm({
                           <SelectItem value="Churned">Churned</SelectItem>
                         </SelectContent>
                       </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="prospectingStage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Prospecting Stage</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Relationship Building" {...field} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -245,22 +301,93 @@ export function EditAccountForm({
                     </FormItem>
                   )}
                 />
-                <div className="md:col-span-2 my-4 border-t pt-4">
-                  <h3 className="text-lg font-medium">Commercial Details</h3>
-                </div>
-                <FormField
+                 <FormField
                   control={form.control}
-                  name="prospectingStage"
+                  name="createdAt"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Prospecting Stage</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., Relationship Building" {...field} />
-                      </FormControl>
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Created At</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                 <FormField
+                  control={form.control}
+                  name="lastActivityDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Last Activity</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="md:col-span-2 my-4 border-t pt-4">
+                  <h3 className="text-lg font-medium">Commercial Details</h3>
+                </div>
+               
                 <FormField
                   control={form.control}
                   name="vendorOnboardingCompleted"
@@ -287,8 +414,8 @@ export function EditAccountForm({
                   control={form.control}
                   name="vendorManagementSoftware"
                   render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                      <FormLabel>Vendor Management Software</FormLabel>
+                    <FormItem>
+                      <FormLabel>Vendor Mgt. Software</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g., RealPage, Yardi, etc." {...field} />
                       </FormControl>
@@ -304,6 +431,19 @@ export function EditAccountForm({
                       <FormLabel>Insurance Requirements</FormLabel>
                       <FormControl>
                         <Textarea placeholder="Describe insurance requirements..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="decisionTree"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>Decision Tree</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Describe the organizational hierarchy for decision making..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

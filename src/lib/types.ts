@@ -15,6 +15,10 @@ export type Account = {
   vendorOnboardingCompleted?: 'Yes' | 'No' | 'Not applicable';
   insuranceRequirements?: string;
   prospectingStage?: string;
+  accountType?: 'Owner' | 'Property Manager' | 'General Contractor' | 'Developer';
+  createdAt?: string; // ISO 8601 date string
+  lastActivityDate?: string; // ISO 8601 date string
+  decisionTree?: string; // For organizational influence mapping
 };
 
 export type Contact = {
