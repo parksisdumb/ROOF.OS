@@ -6,16 +6,13 @@ import { contacts } from './data/contacts';
 import { accounts } from './data/accounts';
 
 export function getFollowUpTasks(): FollowUpTask[] {
-  const allTasks: FollowUpTask[] = [];
+  const potentialTasks: FollowUpTask[] = [];
 
-  // Get all contact IDs that are already associated with a lead
-  const leadContactIds = new Set(leads.map(lead => lead.contactId));
-
-  // Process leads
+  // 1. Add all tasks from leads
   for (const lead of leads) {
     if (lead.nextFollowUpAt && !['Won', 'Lost'].includes(lead.status)) {
       const account = accounts.find(a => a.id === lead.accountId);
-      allTasks.push({
+      potentialTasks.push({
         id: `lead-${lead.id}`,
         dueDate: lead.nextFollowUpAt,
         type: 'Lead',
@@ -27,11 +24,11 @@ export function getFollowUpTasks(): FollowUpTask[] {
     }
   }
 
-  // Process contacts only if they are NOT associated with a lead
+  // 2. Add all tasks from contacts
   for (const contact of contacts) {
-    if (contact.followUpDate && !leadContactIds.has(contact.id)) {
+    if (contact.followUpDate) {
       const account = accounts.find(a => a.id === contact.accountId);
-      allTasks.push({
+      potentialTasks.push({
         id: `contact-${contact.id}`,
         dueDate: contact.followUpDate,
         type: 'Contact',
@@ -43,10 +40,31 @@ export function getFollowUpTasks(): FollowUpTask[] {
     }
   }
   
-  // Sort the final, de-duplicated list by due date
-  allTasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+  // 3. De-duplicate tasks using a Map, prioritizing lead-based tasks
+  const taskMap = new Map<string, FollowUpTask>();
 
-  return allTasks;
+  for (const task of potentialTasks) {
+    // A key can be the contact ID or the lead ID
+    const entityId = task.relatedEntity.id;
+    const contactId = task.type === 'Lead' ? (task.relatedEntity as Lead).contactId : entityId;
+
+    // If it's a lead task, it always gets priority.
+    if (task.type === 'Lead') {
+      taskMap.set(contactId, task);
+    } else {
+      // If it's a contact task, only add it if a task for this contact doesn't already exist.
+      if (!taskMap.has(contactId)) {
+        taskMap.set(contactId, task);
+      }
+    }
+  }
+
+  const uniqueTasks = Array.from(taskMap.values());
+  
+  // 4. Sort the final list by due date
+  uniqueTasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+
+  return uniqueTasks;
 }
 
 
