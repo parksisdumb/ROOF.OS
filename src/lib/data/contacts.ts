@@ -59,6 +59,8 @@ export const contacts: Contact[] = [
     createdAt: '2022-11-10T09:00:00Z',
     lastActivityDate: '2024-05-29T11:45:00Z',
     lastActivityType: 'Meeting',
+    followUpDate: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), // Upcoming
+    followUpType: 'Meeting',
   },
   { 
     id: 'con_4',

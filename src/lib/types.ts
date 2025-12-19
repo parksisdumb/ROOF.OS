@@ -1,5 +1,6 @@
 
 
+
 export type Account = {
   id: string;
   name: string;
@@ -84,6 +85,7 @@ export type Lead = {
   lastInteraction: string; // ISO 8601 date string
   // New Fields
   nextFollowUpAt?: string; // ISO 8601 date string
+  followUpType?: 'Email' | 'Call' | 'Meeting';
   delayReason?: 'Budget' | 'Timing' | 'Decision-maker unavailable' | 'Tenant issue';
   riskScore?: number; // e.g., 1-100
   competitorsInvolved?: boolean;
@@ -107,3 +109,13 @@ export type NavItem = {
   icon: React.ElementType;
   label?: string;
 }
+
+export type FollowUpTask = {
+    id: string;
+    dueDate: string;
+    type: 'Contact' | 'Lead';
+    title: string;
+    description: string;
+    relatedEntity: Contact | Lead;
+    relatedAccount?: Account;
+};
