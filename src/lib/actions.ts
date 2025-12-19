@@ -17,3 +17,18 @@ export async function generateFollowUpTasks(input: GenerateFollowUpTasksInput) {
     return { success: false, error: 'Failed to generate tasks.' };
   }
 }
+
+export async function updateAccount(id: string, data: { name: string; industry: string }) {
+  console.log(`Updating account ${id} with:`, data);
+  // In a real app, you would update the database here.
+  // We'll simulate a successful update.
+  try {
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('Account updated successfully (simulated).');
+    return { success: true, data: { id, ...data } };
+  } catch (error) {
+    console.error('Account Update Failed:', error);
+    return { success: false, error: 'Failed to update account.' };
+  }
+}
