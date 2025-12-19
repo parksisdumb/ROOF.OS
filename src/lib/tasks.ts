@@ -7,52 +7,47 @@ import { accounts } from './data/accounts';
 
 export function getFollowUpTasks(): FollowUpTask[] {
   const allTasks: FollowUpTask[] = [];
-  const processedEntities = new Set<string>(); // To track contacts and leads that already have tasks
+  const processedEntities = new Set<string>(); // Tracks contacts and leads processed: `contact-{id}` or `lead-{id}`
 
   // Process leads first, as they are higher-priority opportunities
   leads.forEach((lead) => {
     if (lead.nextFollowUpAt && !['Won', 'Lost'].includes(lead.status)) {
       const account = accounts.find(a => a.id === lead.accountId);
-      const leadKey = `lead-${lead.id}`;
       
-      if (!processedEntities.has(leadKey)) {
-        allTasks.push({
-          id: leadKey,
-          dueDate: lead.nextFollowUpAt,
-          type: 'Lead',
-          title: `Follow-up on "${lead.opportunityName}"`,
-          description: `${lead.followUpType} with ${account?.name || 'the client'}.`,
-          relatedEntity: lead,
-          relatedAccount: account,
-        });
-        processedEntities.add(leadKey);
-
-        // If a lead has a contact, mark that contact as processed too
-        // to avoid creating a separate, duplicate task for them.
-        if (lead.contactId) {
-          processedEntities.add(`contact-${lead.contactId}`);
-        }
+      allTasks.push({
+        id: `lead-${lead.id}`, // Unique ID for lead tasks
+        dueDate: lead.nextFollowUpAt,
+        type: 'Lead',
+        title: `Follow-up on "${lead.opportunityName}"`,
+        description: `${lead.followUpType} with ${account?.name || 'the client'}.`,
+        relatedEntity: lead,
+        relatedAccount: account,
+      });
+      
+      // Mark this lead and its associated contact as processed so we don't create a second task for the contact.
+      processedEntities.add(`lead-${lead.id}`);
+      if (lead.contactId) {
+        processedEntities.add(`contact-${lead.contactId}`);
       }
     }
   });
 
-  // Process contacts that don't already have a task via a lead
+  // Process contacts that don't already have a task via an associated lead
   contacts.forEach((contact) => {
-    if (contact.followUpDate) {
-        const contactKey = `contact-${contact.id}`;
-        if (!processedEntities.has(contactKey)) {
-            const account = accounts.find(a => a.id === contact.accountId);
-            allTasks.push({
-                id: contactKey,
-                dueDate: contact.followUpDate,
-                type: 'Contact',
-                title: `Follow-up with ${contact.name}`,
-                description: `${contact.followUpType} with ${contact.name} at ${account?.name || 'their company'}.`,
-                relatedEntity: contact,
-                relatedAccount: account,
-            });
-            processedEntities.add(contactKey);
-        }
+    const contactKey = `contact-${contact.id}`;
+    // Only create a task if the contact has a follow-up and has NOT been processed as part of a lead
+    if (contact.followUpDate && !processedEntities.has(contactKey)) {
+        const account = accounts.find(a => a.id === contact.accountId);
+        allTasks.push({
+            id: contactKey, // Unique ID for contact tasks
+            dueDate: contact.followUpDate,
+            type: 'Contact',
+            title: `Follow-up with ${contact.name}`,
+            description: `${contact.followUpType} with ${contact.name} at ${account?.name || 'their company'}.`,
+            relatedEntity: contact,
+            relatedAccount: account,
+        });
+        processedEntities.add(contactKey);
     }
   });
 
