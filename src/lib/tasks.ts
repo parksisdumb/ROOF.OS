@@ -6,36 +6,48 @@ import { accounts } from './data/accounts';
 
 export function getFollowUpTasks(): FollowUpTask[] {
   const allTasks: FollowUpTask[] = [];
+  const processedEntities = new Set<string>(); // To track contacts and leads that already have tasks
 
-  // Process leads
+  // Process leads first, as they are higher-priority opportunities
   leads.forEach((lead) => {
     if (lead.nextFollowUpAt && !['Won', 'Lost'].includes(lead.status)) {
       const account = accounts.find(a => a.id === lead.accountId);
-      allTasks.push({
-        id: `lead-${lead.id}`,
-        dueDate: lead.nextFollowUpAt,
-        type: 'Lead',
-        title: `Follow-up on "${lead.opportunityName}"`,
-        description: `${lead.followUpType} with ${account?.name || 'the client'}.`,
-        relatedEntity: lead,
-        relatedAccount: account,
-      });
+      const taskKey = `lead-${lead.id}`;
+      if (!processedEntities.has(taskKey)) {
+        allTasks.push({
+          id: taskKey,
+          dueDate: lead.nextFollowUpAt,
+          type: 'Lead',
+          title: `Follow-up on "${lead.opportunityName}"`,
+          description: `${lead.followUpType} with ${account?.name || 'the client'}.`,
+          relatedEntity: lead,
+          relatedAccount: account,
+        });
+        processedEntities.add(taskKey);
+        if (lead.contactId) {
+          processedEntities.add(`contact-${lead.contactId}`); // Prevent duplicate task for the same contact
+        }
+      }
     }
   });
 
-  // Process contacts
+  // Process contacts that don't already have a task via a lead
   contacts.forEach((contact) => {
     if (contact.followUpDate) {
-        const account = accounts.find(a => a.id === contact.accountId);
-      allTasks.push({
-        id: `contact-${contact.id}`,
-        dueDate: contact.followUpDate,
-        type: 'Contact',
-        title: `Follow-up with ${contact.name}`,
-        description: `${contact.followUpType} with ${contact.name} at ${account?.name || 'their company'}.`,
-        relatedEntity: contact,
-        relatedAccount: account,
-      });
+        const taskKey = `contact-${contact.id}`;
+        if (!processedEntities.has(taskKey)) {
+            const account = accounts.find(a => a.id === contact.accountId);
+            allTasks.push({
+                id: taskKey,
+                dueDate: contact.followUpDate,
+                type: 'Contact',
+                title: `Follow-up with ${contact.name}`,
+                description: `${contact.followUpType} with ${contact.name} at ${account?.name || 'their company'}.`,
+                relatedEntity: contact,
+                relatedAccount: account,
+            });
+            processedEntities.add(taskKey);
+        }
     }
   });
 
