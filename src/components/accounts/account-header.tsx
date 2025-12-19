@@ -1,5 +1,5 @@
 'use client';
-import React, 'react';
+import React from 'react';
 import {
   Card,
   CardContent,
