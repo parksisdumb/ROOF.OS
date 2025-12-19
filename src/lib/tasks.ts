@@ -1,3 +1,4 @@
+
 import { isAfter, isBefore, isToday, parseISO, startOfDay, subDays } from 'date-fns';
 import type { Lead, Contact, Account, FollowUpTask, PipelineAlert } from './types';
 import { leads } from './data/leads';
@@ -12,10 +13,11 @@ export function getFollowUpTasks(): FollowUpTask[] {
   leads.forEach((lead) => {
     if (lead.nextFollowUpAt && !['Won', 'Lost'].includes(lead.status)) {
       const account = accounts.find(a => a.id === lead.accountId);
-      const taskKey = `lead-${lead.id}`;
-      if (!processedEntities.has(taskKey)) {
+      const leadKey = `lead-${lead.id}`;
+      
+      if (!processedEntities.has(leadKey)) {
         allTasks.push({
-          id: taskKey,
+          id: leadKey,
           dueDate: lead.nextFollowUpAt,
           type: 'Lead',
           title: `Follow-up on "${lead.opportunityName}"`,
@@ -23,10 +25,11 @@ export function getFollowUpTasks(): FollowUpTask[] {
           relatedEntity: lead,
           relatedAccount: account,
         });
-        processedEntities.add(taskKey);
+        processedEntities.add(leadKey);
+
+        // If a lead has a contact, mark that contact as processed too
+        // to avoid creating a separate, duplicate task for them.
         if (lead.contactId) {
-          // If a lead has a contact, mark that contact as processed too
-          // to avoid creating a separate, duplicate task for them.
           processedEntities.add(`contact-${lead.contactId}`);
         }
       }
@@ -36,11 +39,11 @@ export function getFollowUpTasks(): FollowUpTask[] {
   // Process contacts that don't already have a task via a lead
   contacts.forEach((contact) => {
     if (contact.followUpDate) {
-        const taskKey = `contact-${contact.id}`;
-        if (!processedEntities.has(taskKey)) {
+        const contactKey = `contact-${contact.id}`;
+        if (!processedEntities.has(contactKey)) {
             const account = accounts.find(a => a.id === contact.accountId);
             allTasks.push({
-                id: taskKey,
+                id: contactKey,
                 dueDate: contact.followUpDate,
                 type: 'Contact',
                 title: `Follow-up with ${contact.name}`,
@@ -48,7 +51,7 @@ export function getFollowUpTasks(): FollowUpTask[] {
                 relatedEntity: contact,
                 relatedAccount: account,
             });
-            processedEntities.add(taskKey);
+            processedEntities.add(contactKey);
         }
     }
   });
