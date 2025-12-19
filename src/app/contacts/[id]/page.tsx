@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { ContactHeader } from '@/components/contacts/contact-header';
 import type { Account, Contact } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building, Briefcase } from 'lucide-react';
+import { Building, Briefcase, StickyNote } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ContactDetailsPage({
@@ -25,7 +25,7 @@ export default function ContactDetailsPage({
       <div className="flex flex-col gap-6">
         <ContactHeader contact={contact} account={account} />
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <Card>
                 <CardHeader>
                     <CardTitle>Account Information</CardTitle>
@@ -60,6 +60,19 @@ export default function ContactDetailsPage({
                     </div>
                 </CardContent>
             </Card>
+            {contact.notes && (
+                 <Card className="md:col-span-2 lg:col-span-1">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <StickyNote className="h-5 w-5 text-muted-foreground" />
+                            Notes
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">{contact.notes}</p>
+                    </CardContent>
+                </Card>
+            )}
         </div>
       </div>
     </MainLayout>

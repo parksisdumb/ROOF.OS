@@ -7,10 +7,10 @@ export const accounts: Account[] = [
 ];
 
 export const contacts: Contact[] = [
-  { id: 'con_1', name: 'Sarah Johnson', role: 'Property Manager', email: 'sarah.j@starlight.com', phone: '555-0101', accountId: 'acc_1', avatarUrl: 'https://picsum.photos/seed/10/100/100' },
-  { id: 'con_2', name: 'Mike Williams', role: 'Facilities Manager', email: 'mike.w@greenwood.com', phone: '555-0102', accountId: 'acc_2', avatarUrl: 'https://picsum.photos/seed/11/100/100' },
-  { id: 'con_3', name: 'Chen Liu', role: 'Building Owner', email: 'chen.l@ironclad.com', phone: '555-0103', accountId: 'acc_3', avatarUrl: 'https://picsum.photos/seed/12/100/100' },
-  { id: 'con_4', name: 'Jessica Davis', role: 'Asset Manager', email: 'jess.d@starlight.com', phone: '555-0104', accountId: 'acc_1', avatarUrl: 'https://picsum.photos/seed/13/100/100' },
+  { id: 'con_1', name: 'Sarah Johnson', role: 'Property Manager', email: 'sarah.j@starlight.com', phone: '555-0101', accountId: 'acc_1', avatarUrl: 'https://picsum.photos/seed/10/100/100', notes: 'Prefers communication via email. Key decision-maker for capital projects. Mentioned their annual budget meeting is in Q3.' },
+  { id: 'con_2', name: 'Mike Williams', role: 'Facilities Manager', email: 'mike.w@greenwood.com', phone: '555-0102', accountId: 'acc_2', avatarUrl: 'https://picsum.photos/seed/11/100/100', notes: 'Gatekeeper. Very technical, appreciates detailed specifications. Likes to receive case studies.' },
+  { id: 'con_3', name: 'Chen Liu', role: 'Building Owner', email: 'chen.l@ironclad.com', phone: '555-0103', accountId: 'acc_3', avatarUrl: 'https://picsum.photos/seed/12/100/100', notes: 'Focused on long-term ROI and sustainability. Responds well to data-driven presentations.' },
+  { id: 'con_4', name: 'Jessica Davis', role: 'Asset Manager', email: 'jess.d@starlight.com', phone: '555-0104', accountId: 'acc_1', avatarUrl: 'https://picsum.photos/seed/13/100/100', notes: 'Influencer in the decision process. Manages the financial aspects of property portfolios.' },
 ];
 
 export const properties: Property[] = [

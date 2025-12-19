@@ -25,6 +25,7 @@ export type Contact = {
   phone: string;
   accountId: string;
   avatarUrl: string;
+  notes?: string;
 };
 
 export type ContactWithAccount = Contact & {
