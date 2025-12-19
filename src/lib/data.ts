@@ -1,9 +1,9 @@
 import type { Account, Contact, Property, Lead } from './types';
 
 export const accounts: Account[] = [
-  { id: 'acc_1', name: 'Starlight Properties', companyName: 'Starlight Properties', officeAddress: '123 Main St, Anytown USA', phone: '555-1234', website: 'starlight.com', stage: 'Active', industry: 'Commercial Real Estate', totalValue: 750000, contactIds: ['con_1'], propertyIds: ['prop_1'] },
-  { id: 'acc_2', name: 'Greenwood Management', companyName: 'Greenwood Management', officeAddress: '456 Oak Ave, Anytown USA', phone: '555-5678', website: 'greenwood.com', stage: 'Prospect', industry: 'Residential', totalValue: 450000, contactIds: ['con_2'], propertyIds: ['prop_2'] },
-  { id: 'acc_3', name: 'Ironclad Industrial', companyName: 'Ironclad Industrial', officeAddress: '789 Pine St, Anytown USA', phone: '555-9012', website: 'ironclad.com', stage: 'Active', industry: 'Industrial', totalValue: 1200000, contactIds: ['con_3'], propertyIds: ['prop_3'] },
+  { id: 'acc_1', name: 'Starlight Properties', companyName: 'Starlight Properties', officeAddress: '123 Main St, Anytown USA', phone: '555-1234', website: 'starlight.com', stage: 'Active', industry: 'Commercial Real Estate', totalValue: 750000, contactIds: ['con_1'], propertyIds: ['prop_1'], vendorManagementSoftware: 'RealPage', vendorOnboardingCompleted: 'Yes', insuranceRequirements: 'General Liability $2M', prospectingStage: 'Relationship Building' },
+  { id: 'acc_2', name: 'Greenwood Management', companyName: 'Greenwood Management', officeAddress: '456 Oak Ave, Anytown USA', phone: '555-5678', website: 'greenwood.com', stage: 'Prospect', industry: 'Residential', totalValue: 450000, contactIds: ['con_2'], propertyIds: ['prop_2'], vendorManagementSoftware: 'Yardi', vendorOnboardingCompleted: 'No', insuranceRequirements: 'None', prospectingStage: 'Initial Outreach' },
+  { id: 'acc_3', name: 'Ironclad Industrial', companyName: 'Ironclad Industrial', officeAddress: '789 Pine St, Anytown USA', phone: '555-9012', website: 'ironclad.com', stage: 'Active', industry: 'Industrial', totalValue: 1200000, contactIds: ['con_3'], propertyIds: ['prop_3'], vendorManagementSoftware: 'None', vendorOnboardingCompleted: 'Not applicable', insuranceRequirements: 'General Liability $5M, Auto $1M', prospectingStage: 'Nurturing' },
 ];
 
 export const contacts: Contact[] = [

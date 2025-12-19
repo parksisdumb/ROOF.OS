@@ -10,6 +10,10 @@ export type Account = {
   totalValue: number;
   contactIds: string[];
   propertyIds: string[];
+  vendorManagementSoftware?: string;
+  vendorOnboardingCompleted?: 'Yes' | 'No' | 'Not applicable';
+  insuranceRequirements?: string;
+  prospectingStage?: string;
 };
 
 export type Contact = {
