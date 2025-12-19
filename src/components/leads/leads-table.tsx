@@ -269,3 +269,8 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
           >
             Next
           </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

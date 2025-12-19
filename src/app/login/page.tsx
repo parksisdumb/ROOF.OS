@@ -58,3 +58,10 @@ export default function LoginPage() {
             Don&apos;t have an account?{' '}
             <Link href="#" className="underline">
               Sign up
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

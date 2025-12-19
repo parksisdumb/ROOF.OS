@@ -134,22 +134,3 @@ export function Header() {
     </header>
   );
 }
-
-// Minimal Breadcrumb component to avoid installing another library for now
-const BreadcrumbComponent = ({ children }: { children: React.ReactNode }) => (
-    <nav aria-label="breadcrumb">
-      <ol className="flex items-center space-x-2 text-sm text-muted-foreground">{children}</ol>
-    </nav>
-  );
-  
-  const BreadcrumbItemComponent = ({ children }: { children: React.ReactNode }) => <li className="flex items-center">{children}</li>;
-  
-  const BreadcrumbLinkComponent = ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <Link href={href} className="transition-colors hover:text-foreground">
-      {children}
-    </Link>
-  );
-  
-  const BreadcrumbSeparatorComponent = () => <span className="mx-2">/</span>;
-  
-  const BreadcrumbPageComponent = ({ children }: { children: React.ReactNode }) =>

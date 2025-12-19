@@ -131,3 +131,27 @@ export function AITaskGenerator({ lead, open, onOpenChange }: AITaskGeneratorPro
                     <FormDescription>
                       Provide details about your conversation or meeting.
                     </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" disabled={isGenerating} className="w-full">
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="mr-2 h-4 w-4" />
+                    Generate Tasks
+                  </>
+                )}
+              </Button>
+            </form>
+          </Form>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
