@@ -12,10 +12,18 @@ import { Pencil, Mail, Phone, Building } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import Link from 'next/link';
+import { EditContactForm } from './edit-contact-form';
 
 export function ContactHeader({ contact, account }: { contact: Contact, account?: Account }) {
+  const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
+
   return (
     <>
+      <EditContactForm
+        contact={contact}
+        isOpen={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+      />
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
             <div className="flex items-center gap-4">
@@ -38,7 +46,7 @@ export function ContactHeader({ contact, account }: { contact: Contact, account?
                     )}
                 </div>
             </div>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => setIsEditDialogOpen(true)}>
             <Pencil className="mr-2 h-4 w-4" />
             Edit Contact
           </Button>
