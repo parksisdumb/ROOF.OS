@@ -27,7 +27,7 @@ export function ContactHeader({ contact, account }: { contact: Contact, account?
                 </Avatar>
                 <div>
                     <CardTitle>{contact.name}</CardTitle>
-                    <CardDescription>{contact.role}</CardDescription>
+                    <CardDescription>{contact.jobTitle}</CardDescription>
                      {account && (
                         <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
                             <Building className="h-4 w-4" />

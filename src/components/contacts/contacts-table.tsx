@@ -79,8 +79,8 @@ export const columns: ColumnDef<ContactWithAccount>[] = [
     },
   },
   {
-    accessorKey: 'role',
-    header: 'Role',
+    accessorKey: 'jobTitle',
+    header: 'Title',
   },
   {
     accessorKey: 'accountName',
@@ -168,7 +168,9 @@ export function ContactsTable({ contacts }: { contacts: ContactWithAccount[] }) 
   const [columnFilters, setColumnFilters] =
     React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({
+      email: false,
+    });
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
@@ -229,7 +231,7 @@ export function ContactsTable({ contacts }: { contacts: ContactWithAccount[] }) 
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id === 'accountName' ? 'Account' : column.id}
+                    {column.id === 'accountName' ? 'Account' : column.id === 'jobTitle' ? 'Title' : column.id}
                   </DropdownMenuCheckboxItem>
                 );
               })}

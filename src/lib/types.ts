@@ -19,13 +19,24 @@ export type Account = {
 
 export type Contact = {
   id: string;
-  name: string;
-  role: string;
+  name:string;
+  jobTitle: string;
+  roleType: 'Decision Maker' | 'Influencer' | 'Gatekeeper' | 'Unknown';
   email: string;
   phone: string;
   accountId: string;
   avatarUrl: string;
   notes?: string;
+  leadSource?: 'LinkedIn' | 'Cold Call' | 'Referral' | 'Website' | 'Other';
+  relationshipStatus?: 'Cold' | 'Warming' | 'Active' | 'Stalled';
+  preferredContactMethod?: 'Email' | 'Phone' | 'Text';
+  bestTimeToReach?: string;
+  linkedinUrl?: string;
+  createdAt: string; // ISO 8601 date string
+  lastActivityDate?: string; // ISO 8601 date string
+  lastActivityType?: 'Email' | 'Call' | 'Meeting' | 'Note';
+  followUpDate?: string; // ISO 8601 date string
+  followUpType?: 'Email' | 'Call' | 'Meeting';
 };
 
 export type ContactWithAccount = Contact & {
