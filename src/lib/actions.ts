@@ -4,6 +4,7 @@ import {
   generateFollowUpTasks as generateFollowUpTasksFlow,
   type GenerateFollowUpTasksInput,
 } from '@/ai/flows/generate-follow-up-tasks';
+import type { Account } from './types';
 
 export async function generateFollowUpTasks(input: GenerateFollowUpTasksInput) {
   console.log('Generating tasks for:', input.prospectName);
@@ -18,7 +19,7 @@ export async function generateFollowUpTasks(input: GenerateFollowUpTasksInput) {
   }
 }
 
-export async function updateAccount(id: string, data: { name: string; industry: string }) {
+export async function updateAccount(id: string, data: Partial<Omit<Account, 'id' | 'totalValue' | 'contactIds' | 'propertyIds'>>) {
   console.log(`Updating account ${id} with:`, data);
   // In a real app, you would update the database here.
   // We'll simulate a successful update.

@@ -1,6 +1,11 @@
 export type Account = {
   id: string;
   name: string;
+  companyName?: string;
+  officeAddress?: string;
+  phone?: string;
+  website?: string;
+  stage?: 'Prospect' | 'Active' | 'Churned';
   industry: string;
   totalValue: number;
   contactIds: string[];

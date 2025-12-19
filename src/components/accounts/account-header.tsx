@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, 'react';
 import {
   Card,
   CardContent,
@@ -8,13 +8,29 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import type { Account } from '@/lib/types';
-import { DollarSign, Building, Briefcase, Pencil } from 'lucide-react';
+import { DollarSign, Building, Briefcase, Pencil, MapPin, Phone, Globe, Tag } from 'lucide-react';
 import { KpiCard } from '../dashboard/kpi-card';
 import { Button } from '../ui/button';
 import { EditAccountForm } from './edit-account-form';
+import { Badge } from '../ui/badge';
+
+const getStageBadge = (stage?: Account['stage']) => {
+  if (!stage) return null;
+  switch (stage) {
+    case 'Prospect':
+      return <Badge variant="secondary">{stage}</Badge>;
+    case 'Active':
+      return <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">{stage}</Badge>;
+    case 'Churned':
+      return <Badge variant="destructive">{stage}</Badge>;
+    default:
+      return <Badge>{stage}</Badge>;
+  }
+};
+
 
 export function AccountHeader({ account }: { account: Account }) {
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
   const formattedValue = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -31,8 +47,31 @@ export function AccountHeader({ account }: { account: Account }) {
       <Card>
         <CardHeader className="flex flex-row items-start justify-between">
           <div>
-            <CardTitle>{account.name}</CardTitle>
+            <div className="flex items-center gap-4">
+              <CardTitle>{account.name}</CardTitle>
+              {getStageBadge(account.stage)}
+            </div>
             <CardDescription>{account.industry} Client</CardDescription>
+            <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+              {account.officeAddress && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  <span>{account.officeAddress}</span>
+                </div>
+              )}
+              {account.phone && (
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  <a href={`tel:${account.phone}`} className="hover:underline">{account.phone}</a>
+                </div>
+              )}
+              {account.website && (
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4" />
+                  <a href={`https://${account.website}`} target="_blank" rel="noopener noreferrer" className="hover:underline">{account.website}</a>
+                </div>
+              )}
+            </div>
           </div>
           <Button variant="outline" onClick={() => setIsEditDialogOpen(true)}>
             <Pencil className="mr-2 h-4 w-4" />
