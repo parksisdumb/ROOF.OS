@@ -59,8 +59,10 @@ export const contacts: Contact[] = [
     createdAt: '2022-11-10T09:00:00Z',
     lastActivityDate: '2024-05-29T11:45:00Z',
     lastActivityType: 'Meeting',
-    followUpDate: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), // Upcoming
-    followUpType: 'Meeting',
+    // This contact is associated with lead_4 which has its own follow-up. 
+    // Removing this to prevent duplicate task generation.
+    // followUpDate: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), 
+    // followUpType: 'Meeting',
   },
   { 
     id: 'con_4',
