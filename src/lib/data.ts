@@ -1,14 +1,9 @@
-import { accounts as accountData } from './data/accounts';
-import { contacts as contactData } from './data/contacts';
-import { properties as propertyData } from './data/properties';
-import { leads as leadData } from './data/leads';
-import type { Account, Contact, Property, Lead } from './types';
 
-
-export const accounts: Account[] = accountData;
-export const contacts: Contact[] = contactData;
-export const properties: Property[] = propertyData;
-export const leads: Lead[] = leadData;
+export { accounts } from './data/accounts';
+export { contacts } from './data/contacts';
+export { properties } from './data/properties';
+export { leads } from './data/leads';
+import type { Lead } from './types';
 
 
 export const recentActivities = [
