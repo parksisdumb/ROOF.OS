@@ -6,55 +6,69 @@ import { contacts } from './data/contacts';
 import { accounts } from './data/accounts';
 
 export function getFollowUpTasks(): FollowUpTask[] {
-  const allTasks: FollowUpTask[] = [];
-  const processedEntities = new Set<string>(); // Tracks contacts and leads processed: `contact-{id}` or `lead-{id}`
+  const allPotentialTasks: FollowUpTask[] = [];
 
-  // Process leads first, as they are higher-priority opportunities
+  // First, add all tasks from leads
   leads.forEach((lead) => {
     if (lead.nextFollowUpAt && !['Won', 'Lost'].includes(lead.status)) {
       const account = accounts.find(a => a.id === lead.accountId);
-      
-      allTasks.push({
-        id: `lead-${lead.id}`, // Unique ID for lead tasks
+      allPotentialTasks.push({
+        id: `lead-${lead.id}`,
         dueDate: lead.nextFollowUpAt,
         type: 'Lead',
         title: `Follow-up on "${lead.opportunityName}"`,
-        description: `${lead.followUpType} with ${account?.name || 'the client'}.`,
+        description: `${lead.followUpType} with ${lead.opportunityName}.`,
         relatedEntity: lead,
         relatedAccount: account,
       });
-      
-      // Mark this lead and its associated contact as processed so we don't create a second task for the contact.
-      processedEntities.add(`lead-${lead.id}`);
-      if (lead.contactId) {
-        processedEntities.add(`contact-${lead.contactId}`);
-      }
     }
   });
 
-  // Process contacts that don't already have a task via an associated lead
+  // Then, add all tasks from contacts
   contacts.forEach((contact) => {
-    const contactKey = `contact-${contact.id}`;
-    // Only create a task if the contact has a follow-up and has NOT been processed as part of a lead
-    if (contact.followUpDate && !processedEntities.has(contactKey)) {
+    if (contact.followUpDate) {
         const account = accounts.find(a => a.id === contact.accountId);
-        allTasks.push({
-            id: contactKey, // Unique ID for contact tasks
+        allPotentialTasks.push({
+            id: `contact-${contact.id}`,
             dueDate: contact.followUpDate,
             type: 'Contact',
             title: `Follow-up with ${contact.name}`,
-            description: `${contact.followUpType} with ${contact.name} at ${account?.name || 'their company'}.`,
+            description: `${contact.followUpType} with ${contact.name}.`,
             relatedEntity: contact,
             relatedAccount: account,
         });
-        processedEntities.add(contactKey);
     }
   });
 
-  // Sort tasks by due date, most recent first
-  allTasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+  // De-duplication logic
+  const finalTasks: FollowUpTask[] = [];
+  const processedContactIds = new Set<string>();
 
-  return allTasks;
+  // Prioritize lead tasks. If a lead task exists, we process it and mark its contact as handled.
+  allPotentialTasks
+    .filter(task => task.type === 'Lead')
+    .forEach(task => {
+        finalTasks.push(task);
+        const lead = task.relatedEntity as Lead;
+        if (lead.contactId) {
+            processedContactIds.add(lead.contactId);
+        }
+    });
+
+  // Only add contact tasks if that contact hasn't already been handled by a lead task.
+  allPotentialTasks
+    .filter(task => task.type === 'Contact')
+    .forEach(task => {
+        const contact = task.relatedEntity as Contact;
+        if (!processedContactIds.has(contact.id)) {
+            finalTasks.push(task);
+        }
+    });
+
+  // Sort the final, de-duplicated list by due date
+  finalTasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+
+  return finalTasks;
 }
 
 export function getCategorizedTasks() {
