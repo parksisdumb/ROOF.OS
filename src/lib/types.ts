@@ -1,6 +1,7 @@
 
 
 
+
 export type Account = {
   id: string;
   name: string;
@@ -119,3 +120,10 @@ export type FollowUpTask = {
     relatedEntity: Contact | Lead;
     relatedAccount?: Account;
 };
+
+export type PipelineAlert = {
+    id: string;
+    type: 'Untouched Opportunity' | 'Missing Follow-up' | 'High Risk' | 'Competitor';
+    message: string;
+    relatedLeadId: string;
+}
