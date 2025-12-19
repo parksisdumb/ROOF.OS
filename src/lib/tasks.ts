@@ -25,7 +25,9 @@ export function getFollowUpTasks(): FollowUpTask[] {
         });
         processedEntities.add(taskKey);
         if (lead.contactId) {
-          processedEntities.add(`contact-${lead.contactId}`); // Prevent duplicate task for the same contact
+          // If a lead has a contact, mark that contact as processed too
+          // to avoid creating a separate, duplicate task for them.
+          processedEntities.add(`contact-${lead.contactId}`);
         }
       }
     }
