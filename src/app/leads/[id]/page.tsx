@@ -1,7 +1,6 @@
 
 import { MainLayout } from '@/components/layout/main-layout';
-import { accounts, properties, leads } from '@/lib/data';
-import { contacts } from '@/lib/data/contacts';
+import { accounts, properties, leads, contacts } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import type { Account, Contact, Property, Lead } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
