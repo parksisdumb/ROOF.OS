@@ -84,7 +84,17 @@ export const columns: ColumnDef<Account>[] = [
   },
   {
     accessorKey: 'stage',
-    header: 'Stage',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Stage
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => getStageBadge(row.getValue('stage')),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
