@@ -14,7 +14,7 @@ export function getFollowUpTasks(): FollowUpTask[] {
     if (lead.nextFollowUpAt && !['Won', 'Lost'].includes(lead.status)) {
       const account = accounts.find(a => a.id === lead.accountId);
       tasks.push({
-        id: `task-lead-${lead.id}`, // Unique task ID based on lead
+        id: `lead-${lead.id}`, // Unique task ID for leads
         dueDate: lead.nextFollowUpAt,
         type: 'Lead',
         title: `Follow-up on "${lead.opportunityName}"`,
@@ -36,7 +36,7 @@ export function getFollowUpTasks(): FollowUpTask[] {
     if (contact.followUpDate && !processedContactIds.has(contact.id)) {
         const account = accounts.find(a => a.id === contact.accountId);
         tasks.push({
-            id: `task-contact-${contact.id}`, // Unique task ID based on contact
+            id: `contact-${contact.id}`, // Unique task ID for contacts
             dueDate: contact.followUpDate,
             type: 'Contact',
             title: `Follow-up with ${contact.name}`,
@@ -52,6 +52,7 @@ export function getFollowUpTasks(): FollowUpTask[] {
 
   return tasks;
 }
+
 
 export function getCategorizedTasks() {
   const tasks = getFollowUpTasks();
