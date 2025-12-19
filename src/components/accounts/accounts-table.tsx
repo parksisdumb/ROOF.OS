@@ -37,6 +37,28 @@ import {
 } from '@/components/ui/table';
 import type { Account } from '@/lib/types';
 import Link from 'next/link';
+import { Badge } from '../ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
+
+const getStageBadge = (stage?: Account['stage']) => {
+  if (!stage) return null;
+  switch (stage) {
+    case 'Prospect':
+      return <Badge variant="secondary">{stage}</Badge>;
+    case 'Active':
+      return <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">{stage}</Badge>;
+    case 'Churned':
+      return <Badge variant="destructive">{stage}</Badge>;
+    default:
+      return <Badge>{stage}</Badge>;
+  }
+};
 
 export const columns: ColumnDef<Account>[] = [
   {
@@ -61,8 +83,20 @@ export const columns: ColumnDef<Account>[] = [
     },
   },
   {
-    accessorKey: 'industry',
-    header: 'Industry',
+    accessorKey: 'stage',
+    header: 'Stage',
+    cell: ({ row }) => getStageBadge(row.getValue('stage')),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+  },
+  {
+    accessorKey: 'phone',
+    header: 'Phone',
+  },
+  {
+    accessorKey: 'prospectingStage',
+    header: 'Prospecting Stage',
   },
   {
     accessorKey: 'totalValue',
@@ -72,6 +106,7 @@ export const columns: ColumnDef<Account>[] = [
       const formatted = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
+        maximumFractionDigits: 0
       }).format(amount);
 
       return <div className="text-right font-medium">{formatted}</div>;
@@ -141,15 +176,29 @@ export function AccountsTable({ accounts }: { accounts: Account[] }) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center gap-4 py-4">
         <Input
           placeholder="Filter by account name..."
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-xs"
         />
+        <Select
+          value={(table.getColumn('stage')?.getFilterValue() as string) ?? ''}
+          onValueChange={(value) => table.getColumn('stage')?.setFilterValue(value === 'all' ? '' : value)}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter by Stage" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Stages</SelectItem>
+            <SelectItem value="Prospect">Prospect</SelectItem>
+            <SelectItem value="Active">Active</SelectItem>
+            <SelectItem value="Churned">Churned</SelectItem>
+          </SelectContent>
+        </Select>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -170,7 +219,7 @@ export function AccountsTable({ accounts }: { accounts: Account[] }) {
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {column.id === 'prospectingStage' ? 'Prospecting Stage' : column.id}
                   </DropdownMenuCheckboxItem>
                 );
               })}
