@@ -22,6 +22,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -62,7 +63,7 @@ export const columns: ColumnDef<ContactWithAccount>[] = [
     cell: ({ row }) => {
       const contact = row.original;
       return (
-        <div className="flex items-center gap-3">
+        <Link href={`/contacts/${contact.id}`} className="flex items-center gap-3 group">
           <Avatar className="h-8 w-8">
             <AvatarImage src={contact.avatarUrl} alt={contact.name} />
             <AvatarFallback>
@@ -72,8 +73,8 @@ export const columns: ColumnDef<ContactWithAccount>[] = [
                 .join('')}
             </AvatarFallback>
           </Avatar>
-          <div className="font-medium">{contact.name}</div>
-        </div>
+          <div className="font-medium group-hover:underline">{contact.name}</div>
+        </Link>
       );
     },
   },
@@ -149,8 +150,10 @@ export const columns: ColumnDef<ContactWithAccount>[] = [
                 Copy Contact ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href={`/contacts/${contact.id}`}>View details</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem>Edit Contact</DropdownMenuItem>
-              <DropdownMenuItem>View Details</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -160,6 +163,7 @@ export const columns: ColumnDef<ContactWithAccount>[] = [
 ];
 
 export function ContactsTable({ contacts }: { contacts: ContactWithAccount[] }) {
+  const router = useRouter();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] =
     React.useState<ColumnFiltersState>([]);
@@ -258,9 +262,17 @@ export function ContactsTable({ contacts }: { contacts: ContactWithAccount[] }) 
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  onClick={() => router.push(`/contacts/${row.original.id}`)}
+                  className="cursor-pointer"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} onClick={(e) => {
+                      // Stop propagation for links and actions inside the row
+                      const target = e.target as HTMLElement;
+                      if (target.closest('a') || cell.column.id === 'actions') {
+                          e.stopPropagation();
+                      }
+                    }}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
