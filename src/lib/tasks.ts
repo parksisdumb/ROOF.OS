@@ -6,58 +6,51 @@ import { contacts } from './data/contacts';
 import { accounts } from './data/accounts';
 
 export function getFollowUpTasks(): FollowUpTask[] {
-  const tasksMap = new Map<string, FollowUpTask>();
+  const tasks: FollowUpTask[] = [];
+  const processedContactIds = new Set<string>();
 
-  // Add tasks from leads first, giving them priority
+  // Process leads first
   leads.forEach((lead) => {
     if (lead.nextFollowUpAt && !['Won', 'Lost'].includes(lead.status)) {
       const account = accounts.find(a => a.id === lead.accountId);
-      const task: FollowUpTask = {
-        id: `task-${lead.id}`, // Unique task ID based on lead
+      tasks.push({
+        id: `task-lead-${lead.id}`, // Unique task ID based on lead
         dueDate: lead.nextFollowUpAt,
         type: 'Lead',
         title: `Follow-up on "${lead.opportunityName}"`,
         description: `${lead.followUpType} with ${lead.opportunityName}.`,
         relatedEntity: lead,
         relatedAccount: account,
-      };
-      // Use the contact ID for the map key to handle de-duplication
+      });
+      // If a lead has a follow-up, we consider its primary contact processed for tasks
       if (lead.contactId) {
-        tasksMap.set(lead.contactId, task);
-      } else {
-        tasksMap.set(lead.id, task); // Fallback to lead ID if no contact
+        processedContactIds.add(lead.contactId);
       }
     }
   });
 
-  // Then, add tasks from contacts, only if a task for that contact doesn't already exist
+  // Then, process contacts, skipping any that were already handled via a lead
   contacts.forEach((contact) => {
-    if (contact.followUpDate) {
-        // If a task for this contact already exists from a lead, skip it.
-        if (tasksMap.has(contact.id)) {
-            return;
-        }
-
+    // Only create a contact-based task if the contact has a follow-up
+    // AND has not already been processed as part of a lead.
+    if (contact.followUpDate && !processedContactIds.has(contact.id)) {
         const account = accounts.find(a => a.id === contact.accountId);
-        const task: FollowUpTask = {
-            id: `task-${contact.id}`, // Unique task ID based on contact
+        tasks.push({
+            id: `task-contact-${contact.id}`, // Unique task ID based on contact
             dueDate: contact.followUpDate,
             type: 'Contact',
             title: `Follow-up with ${contact.name}`,
             description: `${contact.followUpType} with ${contact.name}.`,
             relatedEntity: contact,
             relatedAccount: account,
-        };
-        tasksMap.set(contact.id, task);
+        });
     }
   });
-  
-  const finalTasks = Array.from(tasksMap.values());
 
   // Sort the final, de-duplicated list by due date
-  finalTasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+  tasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
-  return finalTasks;
+  return tasks;
 }
 
 export function getCategorizedTasks() {
