@@ -185,6 +185,19 @@ export function AccountsTable({ accounts }: { accounts: Account[] }) {
           }
           className="max-w-xs"
         />
+        <Input
+          placeholder="Filter by prospecting stage..."
+          value={
+            (table.getColumn('prospectingStage')?.getFilterValue() as string) ??
+            ''
+          }
+          onChange={(event) =>
+            table
+              .getColumn('prospectingStage')
+              ?.setFilterValue(event.target.value)
+          }
+          className="max-w-xs"
+        />
         <Select
           value={(table.getColumn('stage')?.getFilterValue() as string) ?? ''}
           onValueChange={(value) => table.getColumn('stage')?.setFilterValue(value === 'all' ? '' : value)}
