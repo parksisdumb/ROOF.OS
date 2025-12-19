@@ -82,6 +82,15 @@ export type Lead = {
   expectedCloseDate?: string; // ISO 8601 date string
   status: 'Active' | 'Delayed' | 'Won' | 'Lost' | 'New' | 'Contacted' | 'Qualified' | 'Proposal';
   lastInteraction: string; // ISO 8601 date string
+  // New Fields
+  nextFollowUpAt?: string; // ISO 8601 date string
+  delayReason?: 'Budget' | 'Timing' | 'Decision-maker unavailable' | 'Tenant issue';
+  riskScore?: number; // e.g., 1-100
+  competitorsInvolved?: boolean;
+  scopeSummary?: string;
+  insuranceInvolved?: boolean;
+  emergencyRepair?: boolean;
+  warrantyRequired?: boolean;
 };
 
 export type Interaction = {

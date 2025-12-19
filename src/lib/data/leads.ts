@@ -12,7 +12,14 @@ export const leads: Lead[] = [
     probability: 75,
     expectedCloseDate: '2024-07-15',
     status: 'Proposal', 
-    lastInteraction: '2024-05-10' 
+    lastInteraction: '2024-05-10',
+    nextFollowUpAt: '2024-06-05',
+    riskScore: 30,
+    competitorsInvolved: true,
+    scopeSummary: 'Full TPO roof replacement for 150,000 sqft main tower. Includes tear-off and new insulation.',
+    insuranceInvolved: false,
+    emergencyRepair: false,
+    warrantyRequired: true,
   },
   { 
     id: 'lead_2', 
@@ -25,7 +32,14 @@ export const leads: Lead[] = [
     probability: 50,
     expectedCloseDate: '2024-08-01',
     status: 'Qualified', 
-    lastInteraction: '2024-05-15'
+    lastInteraction: '2024-05-15',
+    nextFollowUpAt: '2024-06-10',
+    riskScore: 50,
+    competitorsInvolved: false,
+    scopeSummary: 'Annual maintenance contract for 5 buildings in the office park. Includes gutter cleaning and inspections.',
+    insuranceInvolved: false,
+    emergencyRepair: false,
+    warrantyRequired: false,
   },
   { 
     id: 'lead_3', 
@@ -36,7 +50,11 @@ export const leads: Lead[] = [
     opportunityType: 'Repair',
     estimatedValue: 25000, 
     status: 'Contacted', 
-    lastInteraction: '2024-05-20'
+    lastInteraction: '2024-05-20',
+    nextFollowUpAt: '2024-06-01',
+    scopeSummary: 'Investigate and repair multiple leaks reported on the top floor of the East wing.',
+    insuranceInvolved: true,
+    emergencyRepair: true,
   },
   { 
     id: 'lead_4', 
@@ -48,7 +66,10 @@ export const leads: Lead[] = [
     estimatedValue: 300000, 
     probability: 20,
     status: 'New', 
-    lastInteraction: '2024-05-21'
+    lastInteraction: '2024-05-21',
+    riskScore: 80,
+    scopeSummary: 'Provide quote for a new metal roof installation on a 500,000 sqft warehouse under construction.',
+    warrantyRequired: true,
   },
   { 
     id: 'lead_5', 
