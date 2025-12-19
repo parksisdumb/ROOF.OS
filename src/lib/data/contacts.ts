@@ -1,4 +1,3 @@
-'use client';
 import type { Contact } from '../types';
 
 export const contacts: Contact[] = [
