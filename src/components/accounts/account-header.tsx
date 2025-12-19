@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import type { Account } from '@/lib/types';
-import { DollarSign, Building, Briefcase, Pencil, MapPin, Phone, Globe, Tag } from 'lucide-react';
+import { DollarSign, Building, Briefcase, Pencil, MapPin, Phone, Globe } from 'lucide-react';
 import { KpiCard } from '../dashboard/kpi-card';
 import { Button } from '../ui/button';
 import { EditAccountForm } from './edit-account-form';
