@@ -11,10 +11,18 @@ import { getCategorizedTasks } from '@/lib/tasks';
 import { format, isToday } from 'date-fns';
 import { Mail, Phone, CalendarCheck, Building } from 'lucide-react';
 import Link from 'next/link';
+import type { Lead, Contact } from '@/lib/types';
 
 export function UpcomingTasks() {
   const { dueToday, upcoming } = getCategorizedTasks();
   const tasks = [...dueToday, ...upcoming.slice(0, 5 - dueToday.length)]; // Show up to 5 tasks total
+
+  const getFollowUpType = (entity: Lead | Contact) => {
+    if ('followUpType' in entity) {
+      return entity.followUpType;
+    }
+    return undefined;
+  }
 
   const getIconForType = (type?: 'Email' | 'Call' | 'Meeting') => {
     switch (type) {
@@ -51,7 +59,7 @@ export function UpcomingTasks() {
                 className="flex items-center gap-4 rounded-md p-2 -m-2 hover:bg-secondary transition-colors"
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  {getIconForType(task.relatedEntity.followUpType)}
+                  {getIconForType(getFollowUpType(task.relatedEntity))}
                 </div>
                 <div className="flex-grow">
                   <p className="font-medium leading-tight">{task.title}</p>

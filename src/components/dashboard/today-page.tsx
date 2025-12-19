@@ -13,18 +13,17 @@ import {
   ChevronRight,
   Phone,
   Mail,
-  User,
   Building,
   DollarSign
 } from 'lucide-react';
 import { KpiCard } from './kpi-card';
 import { getCategorizedTasks } from '@/lib/tasks';
 import { Button } from '../ui/button';
-import { format, formatDistanceToNow } from 'date-fns';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import { UpcomingTasks } from './upcoming-tasks';
 import { PipelineHealthAlerts } from './pipeline-health-alerts';
+import type { Lead, Contact } from '@/lib/types';
 
 
 export function TodayPage() {
@@ -42,6 +41,20 @@ export function TodayPage() {
         return <CalendarCheck className="h-4 w-4 text-muted-foreground" />;
     }
   };
+
+  const getFollowUpType = (entity: Lead | Contact) => {
+    if ('followUpType' in entity) {
+      return entity.followUpType;
+    }
+    return undefined;
+  }
+
+  const getEstimatedValue = (entity: Lead | Contact) => {
+    if ('estimatedValue' in entity) {
+      return entity.estimatedValue;
+    }
+    return undefined;
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -82,7 +95,7 @@ export function TodayPage() {
                         <div className="flex flex-col gap-4 rounded-lg border-2 border-primary bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex items-start gap-4">
                             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary">
-                                {getIconForType(highestPriority.relatedEntity.followUpType)}
+                                {getIconForType(getFollowUpType(highestPriority.relatedEntity))}
                             </span>
                             <div>
                                 <p className="font-semibold">{highestPriority.title}</p>
@@ -92,8 +105,8 @@ export function TodayPage() {
                             </div>
                             </div>
                             <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                {highestPriority.type === 'Lead' && (highestPriority.relatedEntity as any).estimatedValue && (
-                                    <div className='flex items-center gap-1'><DollarSign className="h-4 w-4" /> {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format((highestPriority.relatedEntity as any).estimatedValue)}</div>
+                                {highestPriority.type === 'Lead' && getEstimatedValue(highestPriority.relatedEntity) && (
+                                    <div className='flex items-center gap-1'><DollarSign className="h-4 w-4" /> {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(getEstimatedValue(highestPriority.relatedEntity)!)}</div>
                                 )}
                                 {highestPriority.relatedAccount && (
                                     <div className='flex items-center gap-1'><Building className="h-4 w-4" /> {highestPriority.relatedAccount.name}</div>
