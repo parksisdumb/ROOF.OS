@@ -20,4 +20,9 @@ export default function LeadsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Le
+          <LeadsTable leads={leads} />
+        </CardContent>
+      </Card>
+    </MainLayout>
+  );
+}

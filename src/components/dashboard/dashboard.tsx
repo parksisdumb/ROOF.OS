@@ -60,3 +60,8 @@ export function Dashboard() {
           <CardContent>
             <LeadsTable leads={mockLeads.slice(0, 5)} />
           </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

@@ -6,7 +6,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { recentActivities } from '@/lib/data';
 
 export function RecentActivity() {
   return (
@@ -18,13 +17,13 @@ export function RecentActivity() {
       <CardContent className="grid gap-4">
         <div className=" flex items-center gap-4">
           <Avatar className="hidden h-9 w-9 sm:flex">
-            <AvatarImage src="https://picsum.photos/seed/10/100/100" alt="Avatar" />
+            <AvatarImage src="https://picsum.photos/seed/10/100/100" alt="Avatar" data-ai-hint="person face" />
             <AvatarFallback>SJ</AvatarFallback>
           </Avatar>
           <div className="grid gap-1">
             <p className="text-sm font-medium leading-none">
               Logged a call with Sarah Johnson
-            </p> tribulations
+            </p>
             <p className="text-sm text-muted-foreground">
               Discussed the new proposal for Highrise Tower.
             </p>
@@ -33,7 +32,7 @@ export function RecentActivity() {
         </div>
         <div className=" flex items-center gap-4">
           <Avatar className="hidden h-9 w-9 sm:flex">
-            <AvatarImage src="https://picsum.photos/seed/11/100/100" alt="Avatar" />
+            <AvatarImage src="https://picsum.photos/seed/11/100/100" alt="Avatar" data-ai-hint="person face" />
             <AvatarFallback>MW</AvatarFallback>
           </Avatar>
           <div className="grid gap-1">
@@ -48,7 +47,7 @@ export function RecentActivity() {
         </div>
         <div className=" flex items-center gap-4">
           <Avatar className="hidden h-9 w-9 sm:flex">
-            <AvatarImage src="https://picsum.photos/seed/12/100/100" alt="Avatar" />
+            <AvatarImage src="https://picsum.photos/seed/12/100/100" alt="Avatar" data-ai-hint="person face" />
             <AvatarFallback>CL</AvatarFallback>
           </Avatar>
           <div className="grid gap-1">
@@ -62,8 +61,8 @@ export function RecentActivity() {
           <div className="ml-auto text-sm text-muted-foreground">Yesterday</div>
         </div>
         <div className=" flex items-center gap-4">
-          <Avatar className="hidden h-9 w-9 sm-flex">
-            <AvatarImage src="https://picsum.photos/seed/13/100/100" alt="Avatar" />
+          <Avatar className="hidden h-9 w-9 sm:flex">
+            <AvatarImage src="https://picsum.photos/seed/13/100/100" alt="Avatar" data-ai-hint="person face" />
             <AvatarFallback>RF</AvatarFallback>
           </Avatar>
           <div className="grid gap-1">
@@ -75,3 +74,8 @@ export function RecentActivity() {
             </p>
           </div>
           <div className="ml-auto text-sm text-muted-foreground">2 days ago</div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

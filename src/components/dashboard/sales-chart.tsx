@@ -65,3 +65,6 @@ export function SalesChart() {
             </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
+    </Card>
+  );
+}

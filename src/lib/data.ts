@@ -3,7 +3,7 @@ import type { Account, Contact, Property, Lead } from './types';
 export const accounts: Account[] = [
   { id: 'acc_1', name: 'Starlight Properties', industry: 'Commercial Real Estate', totalValue: 750000, contactIds: ['con_1'], propertyIds: ['prop_1'] },
   { id: 'acc_2', name: 'Greenwood Management', industry: 'Residential', totalValue: 450000, contactIds: ['con_2'], propertyIds: ['prop_2'] },
-  { id: 'acc_3', name 'Ironclad Industrial', industry: 'Industrial', totalValue: 1200000, contactIds: ['con_3'], propertyIds: ['prop_3'] },
+  { id: 'acc_3', name: 'Ironclad Industrial', industry: 'Industrial', totalValue: 1200000, contactIds: ['con_3'], propertyIds: ['prop_3'] },
 ];
 
 export const contacts: Contact[] = [
