@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { PropertyHeader } from '@/components/properties/property-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AspectRatio, Calendar, CheckCircle, Construction, Hand, Home, Layers, Ruler, Thermometer, User, Warehouse, XCircle } from 'lucide-react';
+import { Calendar, Construction, Hand, Home, Layers, Ruler, Thermometer, User, Warehouse, Hourglass } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 
@@ -53,7 +53,7 @@ export default function PropertyDetailsPage({
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <AspectRatio className="mt-1 h-5 w-5 text-muted-foreground" />
+                  <Hourglass className="mt-1 h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-muted-foreground">Estimated Remaining Life</p>
                     <p className="font-medium">{property.estimatedRemainingLife !== undefined ? `${property.estimatedRemainingLife} years` : 'N/A'}</p>
