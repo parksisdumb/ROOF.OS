@@ -1,4 +1,5 @@
 
+
 export type Account = {
   id: string;
   name: string;
@@ -18,7 +19,7 @@ export type Account = {
   accountType?: 'Owner' | 'Property Manager' | 'General Contractor' | 'Developer';
   createdAt?: string; // ISO 8601 date string
   lastActivityDate?: string; // ISO 8601 date string
-  decisionTree?: string; // For organizational influence mapping
+  decisionTree?: string; // For organizational contact decision making influence
 };
 
 export type Contact = {
@@ -49,11 +50,25 @@ export type ContactWithAccount = Contact & {
 
 export type Property = {
   id: string;
-  address: string;
-  type: 'Commercial' | 'Residential' | 'Industrial';
-  roofType: string;
+  propertyName: string;
   accountId: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zip: string;
+  propertyType: 'Warehouse' | 'Retail' | 'Office' | 'Industrial' | 'Commercial' | 'Residential';
+  roofType: 'TPO' | 'EPDM' | 'Metal' | 'Mod Bit' | 'Asphalt Shingle';
+  approxSqft: number;
+  stories: number;
+  yearBuilt: number;
+  assignedRepId?: string;
+  lastRoofInstallYear?: number;
+  estimatedRemainingLife?: number;
+  knownLeaks: boolean;
+  maintenanceProgram: 'Yes' | 'No';
+  inspectionFrequency?: 'Annually' | 'Semi-Annually' | 'Quarterly';
 };
+
 
 export type Lead = {
   id:string;

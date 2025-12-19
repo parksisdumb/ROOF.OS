@@ -20,6 +20,7 @@ import {
   Map,
   Settings,
   LifeBuoy,
+  Warehouse
 } from 'lucide-react';
 import { Logo } from '@/components/icons/logo';
 import { usePathname } from 'next/navigation';
@@ -32,6 +33,7 @@ const mainNav: NavItem[] = [
   { href: '/leads', title: 'Leads', icon: Briefcase },
   { href: '/accounts', title: 'Accounts', icon: Building },
   { href: '/contacts', title: 'Contacts', icon: Users },
+  { href: '/properties', title: 'Properties', icon: Warehouse },
   { href: '/prospecting', title: 'Prospecting Map', icon: Map },
 ];
 
@@ -44,7 +46,11 @@ export function MainSidebar() {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
-    return pathname === href;
+    // Handle special case for root, otherwise check startsWith
+    if (href === '/') {
+        return pathname === '/';
+    }
+    return pathname.startsWith(href);
   };
 
   return (
